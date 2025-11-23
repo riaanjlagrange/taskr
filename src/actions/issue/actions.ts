@@ -1,6 +1,8 @@
 "use server";
 
 import prisma from "@/src/lib/prisma";
+import { ActionResponse } from "@/src/type";
+import { Issue } from "@/src/type";
 import { auth } from "@clerk/nextjs/server";
 
 
@@ -16,31 +18,41 @@ export async function createIssue({
   title: string,
   status?: string,
   priority?: string
-}) {
-  // make sure user is signed in
-  const { userId } = await auth();
-  if (!userId) throw new Error("Not authenticated")
+}): Promise<ActionResponse<Issue>> {
+  try {
+    // make sure user is signed in
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: "Not authenticated" };
+    }
 
-  // Make sure the project belongs to the current user
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-  });
+    // Make sure the project belongs to the current user
+    const project = await prisma.project.findFirst({
+      where: { 
+        id: projectId,
+        user: { clerkId: userId }
+      }
+    });
 
-  if (!project || project.userId !== userId) {
-    throw new Error("Project not found or not authorized");
+    if (!project) {
+      return { success: false, error: "Project not found or not authorized" };
+    }
+
+    // create new issue for project
+    const issue = await prisma.issue.create({
+      data: {
+        projectId,
+        title,
+        status,
+        priority
+      },
+    });
+
+    return { success: true, data: issue };
+  } catch (error) {
+    console.error("Create issue error:", error);
+    return { success: false, error: "Failed to create issue" };
   }
-
-  // create new issue for project
-  const issue = await prisma.issue.create({
-    data: {
-      projectId,
-      title,
-      status,
-      priority
-    },
-  })
-
-  return issue;
 }
 
 
@@ -56,65 +68,78 @@ export async function updateIssue({
   title?: string,
   status?: string,
   priority?: string
-}) {
-  // make sure user is signed in
-  const { userId } = await auth();
-  if (!userId) throw new Error("Not authenticated")
+}): Promise<ActionResponse<Issue>> {
+  try {
+    // make sure user is signed in
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: "Not authenticated" };
+    }
 
-  // make sure the issue already exists
-  const issue = await prisma.issue.findUnique({
-    where: { id: issueId }
-  })
-  if (!issue) {
-    throw new Error("Issue not found");
-  }
+    // make sure the issue exists and belongs to user's project
+    const issue = await prisma.issue.findFirst({
+      where: { 
+        id: issueId,
+        project: {
+          user: { clerkId: userId }
+        }
+      }
+    });
 
-  // make sure the project belongs to the current user
-  const project = await prisma.project.findUnique({
-    where: { id: issue.projectId },
-  });
-  if (!project || project.userId !== userId) {
-    throw new Error("Project not found or not authorized");
-  }
+    if (!issue) {
+      return { success: false, error: "Issue not found or not authorized" };
+    }
   
-  // update the issue
-  const updatedIssue = await prisma.issue.update({
-    where: { id: issueId },
-    data: {
-      ...(title && { title }),
-      ...(status && { status }),
-      ...(priority && { priority }),
-    },
-  });
+    // update the issue
+    const updatedIssue = await prisma.issue.update({
+      where: { id: issueId },
+      data: {
+        ...(title && { title }),
+        ...(status && { status }),
+        ...(priority && { priority }),
+      },
+    });
 
-  return updatedIssue;
+    return { success: true, data: updatedIssue };
+  } catch (error) {
+    console.error("Update issue error:", error);
+    return { success: false, error: "Failed to update issue" };
+  }
 }
 
 
 // delete an issue
 
-export async function deleteIssue(issueId: number) {
-  // make sure user is signed in
-  const { userId } = await auth();
-  if (!userId) throw new Error("Not authenticated")
+export async function deleteIssue(issueId: number): Promise<ActionResponse> {
+  try {
+    // make sure user is signed in
+    const { userId } = await auth();
+    if (!userId) {
+      return { success: false, error: "Not authenticated" };
+    }
 
-  // make sure the issue already exists
-  const issue = await prisma.issue.findUnique({
-    where: { id: issueId }
-  })
-  if (!issue) {
-    throw new Error("Issue not found");
+    // make sure the issue exists and belongs to user's project
+    const issue = await prisma.issue.findFirst({
+      where: { 
+        id: issueId,
+        project: {
+          user: { clerkId: userId }
+        }
+      }
+    });
+
+    if (!issue) {
+      return { success: false, error: "Issue not found or not authorized" };
+    }
+
+    // delete the issue
+    await prisma.issue.delete({ 
+      where: { id: issueId } 
+    });
+
+    return { success: true, data: undefined };
+  } catch (error) {
+    console.error("Delete issue error:", error);
+    return { success: false, error: "Failed to delete issue" };
   }
-
-  // make sure the project belongs to the current user
-  const project = await prisma.project.findUnique({
-    where: { id: issue.projectId },
-  });
-  if (!project || project.userId !== userId) {
-    throw new Error("Project not found or not authorized");
-  }
-
-  await prisma.issue.delete({ where: { id: issueId } });
-
-  return { success: true };
 }
