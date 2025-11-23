@@ -1,15 +1,11 @@
-import { getProjects } from "@/src/actions/project/actions"
+import ProjectCreateBtn from "@/src/components/project-add-btn";
+import ProjectList from "@/src/components/project-list";
 
 export default async function Projects() {
-  const projects = await getProjects();
-
   return (
-    <ul>
-	 {/*      {projects.map((project: Project) => ( */}
-	 {/*  <li key={project}> */}
-	 {/*    project. */}
-	 {/*  </li> */}
-	 {/* ))} */}
-     </ul>
-  )
+    <section className="flex flex-col items-center mt-5">
+      <ProjectList />
+      <ProjectCreateBtn />
+    </section>
+  );
 }

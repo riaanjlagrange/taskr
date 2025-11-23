@@ -18,7 +18,7 @@ export default async function Home() {
 
   // else if user is signed in, show this
   return (
-    <main className="flex flex-col items-center justify-center w-full h-[100vh]">
+    <main className="flex flex-col items-center justify-center w-full h-screen">
       <h1 className="text-2xl">
 	Welcome to Taskr
       </h1>
