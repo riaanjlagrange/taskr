@@ -82,8 +82,8 @@ export async function updateProject({
   description
 }: {
   projectId: number,
-  title: string,
-  description: string
+  title?: string,
+  description?: string
 }) {
   // make sure user is signed in
   const { userId } = await auth();
@@ -98,16 +98,13 @@ export async function updateProject({
     throw new Error("Project not found or not authorized");
   }
 
-  // update project for user
   const updatedProject = await prisma.project.update({
+    where: { id: projectId },
     data: {
-      title: title,
-      description: description,
+      ...(title && { title }),
+      ...(description && { description }),
     },
-    where: { 
-      id: projectId
-    }
-  })
+  });
 
   return updatedProject;
 }
@@ -120,8 +117,20 @@ export async function deleteProjectById(projectId: number) {
   const { userId } = await auth();
   if (!userId) throw new Error("Not signed in.")
 
+
+  // Make sure the project belongs to the current user
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+
+  if (!project || project.userId !== userId) {
+    throw new Error("Project not found or not authorized");
+  }
+
   // delete project
-  return prisma.project.delete({
+  await prisma.project.delete({
     where: { id: projectId }
   })
+
+  return { success: true };
 }
