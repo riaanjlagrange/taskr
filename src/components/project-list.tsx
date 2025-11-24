@@ -31,7 +31,6 @@ export default function ProjectList({ initialProjects }: { initialProjects: Proj
     })
   }
 
-
   return (
     <section className="w-full">
       <h1 className="text-xl font-bold mb-4">My Projects</h1>
