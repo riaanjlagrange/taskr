@@ -13,7 +13,6 @@ This project is built with a modern technology stack:
 -   **Authentication:** [Clerk](https://clerk.com/)
 -   **UI Components:** [Shadcn UI](https://ui.shadcn.com/)
 -   **Language:** [TypeScript](https://www.typescriptlang.org/)
--   **Form Management:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
 -   **Icons:** [Lucide React](https://lucide.dev/guide/packages/lucide-react) & [React Icons](https://react-icons.github.io/react-icons/)
 -   **Linting:** [ESLint](https.eslint.org)
 
@@ -30,7 +29,7 @@ To get a local copy up and running, follow these simple steps.
 
 1.  Clone the repo
     ```sh
-    git clone https://github.com/your_username/taskr.git
+    git clone https://github.com/riaanjlagrange/taskr.git
     ```
 2.  Install NPM packages
     ```sh
