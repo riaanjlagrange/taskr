@@ -7,6 +7,8 @@ import { deleteProjectById } from "@/actions/project/actions";
 import { toast } from "sonner";
 import { ProjectViewEmpty } from "./project-view-empty";
 import ProjectCreateBtn from "./project-create-btn";
+import { FaAngleLeft } from "react-icons/fa6";
+import Link from "next/link";
 
 // get initial projects from server
 export default function ProjectList({ initialProjects }: { initialProjects: Project[]}) {
@@ -33,7 +35,12 @@ export default function ProjectList({ initialProjects }: { initialProjects: Proj
 
   return (
     <section className="w-full">
-      <h1 className="text-xl font-bold mb-4">My Projects</h1>
+      <div className="flex gap-6 items-center mb-4">
+	<Link href="/">
+	  <FaAngleLeft />
+	</Link>
+	<h1 className="text-xl font-bold">My Projects</h1>
+      </div>
       
       {/* display this if there are no projects */}
       {projects.length === 0 ? (
