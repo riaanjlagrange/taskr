@@ -157,7 +157,7 @@ export async function updateProject({
 
 // delete project by id
 
-export async function deleteProjectById(projectId: number): Promise<ActionResponse> {
+export async function deleteProjectById(projectId: number): Promise<ActionResponse<Project>> {
   try {
     // make sure the user is signed in
     const { userId } = await auth();
@@ -182,7 +182,7 @@ export async function deleteProjectById(projectId: number): Promise<ActionRespon
       where: { id: projectId }
     });
     
-    return { success: true, data: undefined };
+    return { success: true, data: project };
   } catch (error) {
     console.error("Delete project error:", error);
     return { success: false, error: "Failed to delete project" };

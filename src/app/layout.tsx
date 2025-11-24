@@ -4,6 +4,7 @@ import "./globals.css";
 import { ClerkProvider } from '@clerk/nextjs';
 import Header from "../components/header";
 import Footer from "../components/footer";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,11 +31,12 @@ export default function RootLayout({
       <html lang="en" className="dark">
 	<body>
 	  <div
-	    className={`${geistSans.variable} ${geistMono.variable} antialiased relative`}
+	    className={`${geistSans.variable} ${geistMono.variable} antialiased relative my-16`}
 	  >
-	  <Header />
-	    {children}
-	  <Footer />
+	    <Toaster />
+	    <Header />
+	      {children}
+	    <Footer />
 	  </div>
 	</body>
       </html>

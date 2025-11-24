@@ -1,11 +1,9 @@
-import ProjectCreateBtn from "@/components/project-add-btn";
-import ProjectList from "@/components/project-list";
+import ProjectListServer from "@/components/project-list-server";
 
 export default async function Projects() {
   return (
-    <section className="flex flex-col items-center mt-5">
-      <ProjectList />
-      <ProjectCreateBtn />
+    <section className="lg:max-w-[50vw] md:max-w-[65vw] max-w-[80vw] mx-auto pt-8">
+      <ProjectListServer />
     </section>
   );
 }

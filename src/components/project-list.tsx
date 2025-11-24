@@ -1,51 +1,64 @@
-import { redirect } from "next/navigation";
-import { getProjects } from "../actions/project/actions"
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
+"use client";
+
+import { useState, useTransition } from "react";
+import ProjectCard from "./project-card";
 import { Project } from "@/type";
+import { deleteProjectById } from "@/actions/project/actions";
+import { toast } from "sonner";
+import { ProjectViewEmpty } from "./project-view-empty";
+import ProjectCreateBtn from "./project-create-btn";
 
-export default async function ProjectList() {
-  const result = await getProjects();
+// get initial projects from server
+export default function ProjectList({ initialProjects }: { initialProjects: Project[]}) {
+  const [isPending, startTransition] = useTransition();
+  const [projects, setProjects] = useState(initialProjects || [])
 
-  if (!result.success) {
-    // redirect to login if not authenticated
-    if (result.error == "Not authenticated") {
-      redirect('https://loved-wasp-54.accounts.dev/sign-in')
-    }
-    // for other errors, just display the error
-    return <div className="flex items-center justify-center">Error: {result.error}</div>
+  const handleDelete = (id: number) => {
+    startTransition(async () => {
+      const result = await deleteProjectById(id);
+
+      // if submission fails, show error in toast
+      if (!result.success) {
+	toast.error(result.error);
+	return;
+      }
+
+      // update projects after successful deletion
+      setProjects((prev) => prev.filter((p) => p.id !== id))
+
+      // display success toast
+      toast.success(result.data.title + " - Project Deleted");
+    })
   }
 
-  const projects = result.data;
 
   return (
-    <section className="mx-auto p-4">
-      <h1 className="text-xl font-bold mb-6">My Projects</h1>
+    <section className="w-full">
+      <h1 className="text-xl font-bold mb-4">My Projects</h1>
       
+      {/* display this if there are no projects */}
       {projects.length === 0 ? (
-	<div className="text-center py-12">
-	  <p className="text-zinc-300">No projects yet</p>
-	</div>
+	<ProjectViewEmpty />
       ): (
-	<ul className="flex flex-col gap-5 items-center justify-center">
-	  {projects.map((project: Project) => (
-	    <Item variant="outline" key={project.id} className="md:w-[50vw] w-[80vw]">
-	      <ItemContent>
-		<ItemTitle>{project.title}</ItemTitle>
-		<ItemDescription>{project.description}</ItemDescription>
-	      </ItemContent>
-	      <ItemActions>
-		<Link href={`/project/${project.id}`}>
-		  <Button variant="outline" size="sm">
-		    View Project
-		  </Button>
-		</Link>
-	      </ItemActions>
-	    </Item>
-	  ))}
-	</ul>
+      // otherwise display this
+	<div>
+	  <ul className="flex flex-col gap-5 items-center justify-center">
+	    {projects.map((project) => (
+	      <ProjectCard
+		key={project.id}
+		project={project}
+		onDeleteAction={() => handleDelete(project.id)}
+		isPending={isPending}
+	      />
+	    ))}
+	  </ul>
+	  {/* create new project */}
+	  <div className="mt-5 w-full flex justify-center">
+	    <ProjectCreateBtn />
+	  </div>
+	</div>
       )}
+
     </section>
     
   )

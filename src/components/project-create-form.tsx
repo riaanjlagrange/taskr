@@ -40,12 +40,12 @@ export default function ProjectCreateForm() {
 
       // display success toast & redirect to project page
       toast.success(result.data.title + " - Project Created!");
-      router.push(`/project/${result.data.id}`)
+      router.push("/projects")
     })
   }
 
   return (
-    <form action={handleSubmit} className="w-[80%] bg-zinc-800 p-6 rounded-md">
+      <form action={handleSubmit} className="border border-zinc-800 p-6 rounded-md w-full">
       <FieldSet>
 	<FieldLegend>Create New Project</FieldLegend>
 	<FieldGroup>
@@ -75,7 +75,7 @@ export default function ProjectCreateForm() {
 	    type="submit"
 	    disabled={isPending}
 	  >
-	    {isPending ? <Spinner /> : "Submit"}
+	    {isPending ? <Spinner /> : "Create Project"}
 	  </Button>
 	  <Button
 	    variant="outline"
