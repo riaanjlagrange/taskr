@@ -1,8 +1,7 @@
 "use server";
 
-import prisma from "@/src/lib/prisma";
-import { ActionResponse } from "@/src/type";
-import { Issue } from "@/src/type";
+import prisma from "@/lib/prisma";
+import { ActionResponse, Issue } from "@/type";
 import { auth } from "@clerk/nextjs/server";
 
 
