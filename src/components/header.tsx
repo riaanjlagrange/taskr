@@ -1,23 +1,44 @@
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { Button } from "./ui/button"
+import { currentUser } from "@clerk/nextjs/server"
+import Link from "next/link";
 
-export default function Header() {
+export default async function Header() {
+  const user = await currentUser();
+  const fullName =
+    user?.fullName ??
+    (`${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
+    user?.username ||
+    user?.primaryEmailAddress?.emailAddress);
+
   return (
-    <header className="flex justify-end items-center p-4 gap-4 h-16 w-full fixed top-0 bg-zinc-900">
-      <SignedOut>
-	<SignInButton>
-	  <button className="text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-	    Sign In
-	  </button>
-	</SignInButton>
-	<SignUpButton>
-	  <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-	    Sign Up
-	  </button>
-	</SignUpButton>
-      </SignedOut>
-      <SignedIn>
-	<UserButton />
-      </SignedIn>
+    <header className="flex justify-between items-center p-4 h-16 w-full fixed top-0 bg-zinc-900">
+      {/* left side */}
+      <div className="flex gap-4 items-center">
+	<Link href="/" className="hover:text-indigo-300 font-bold transition">
+	  Taskr
+	</Link>
+      </div>
+
+      {/* right side */}
+      <div className="flex gap-4 items-center">
+	<SignedOut>
+	  <SignInButton>
+	    <Button variant="secondary">
+	      Sign In
+	    </Button>
+	  </SignInButton>
+	  <SignUpButton>
+	    <Button>
+	      Sign Up
+	    </Button>
+	  </SignUpButton>
+	</SignedOut>
+	<SignedIn>
+	  <span>{fullName}</span>
+	  <UserButton />
+	</SignedIn>
+      </div>
     </header>
   )
 }
