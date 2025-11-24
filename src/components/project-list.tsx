@@ -3,6 +3,7 @@ import { getProjects } from "../actions/project/actions"
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/components/ui/item";
+import { Project } from "@/type";
 
 export default async function ProjectList() {
   const result = await getProjects();
@@ -28,7 +29,7 @@ export default async function ProjectList() {
 	</div>
       ): (
 	<ul className="flex flex-col gap-5 items-center justify-center">
-	  {projects.map((project) => (
+	  {projects.map((project: Project) => (
 	    <Item variant="outline" key={project.id} className="md:w-[50vw] w-[80vw]">
 	      <ItemContent>
 		<ItemTitle>{project.title}</ItemTitle>

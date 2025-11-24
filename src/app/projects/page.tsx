@@ -1,5 +1,5 @@
-import ProjectCreateBtn from "@/src/components/project-add-btn";
-import ProjectList from "@/src/components/project-list";
+import ProjectCreateBtn from "@/components/project-add-btn";
+import ProjectList from "@/components/project-list";
 
 export default async function Projects() {
   return (
