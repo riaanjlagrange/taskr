@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { ActionResponse, Project } from "@/type";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 
 // create a new project
@@ -36,6 +37,9 @@ export async function createProject({
         userId: user.id, // use ID stored in db, not from clerk
       },
     });
+
+    // make sure projects refresh correctly
+    revalidatePath("/projects")
 
     return { success: true, data: project };
   } catch (error) {
@@ -147,6 +151,9 @@ export async function updateProject({
       },
     });
 
+    // refresh path
+    revalidatePath("/projects")
+
     return { success: true, data: updatedProject }
   } catch (error) {
     console.error("Project update error: ", error)
@@ -181,6 +188,8 @@ export async function deleteProjectById(projectId: number): Promise<ActionRespon
     await prisma.project.delete({
       where: { id: projectId }
     });
+
+    revalidatePath("/projects")
     
     return { success: true, data: project };
   } catch (error) {
