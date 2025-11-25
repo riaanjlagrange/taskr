@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import ProjectCard from "./project-card";
 import { Project } from "@/type";
 import { deleteProjectById } from "@/actions/project/actions";
@@ -9,6 +9,7 @@ import { ProjectViewEmpty } from "./project-view-empty";
 import ProjectCreateBtn from "./project-create-btn";
 import { FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
+import { sortByDate } from "@/lib/utils";
 
 // get initial projects from server
 export default function ProjectList({ initialProjects }: { initialProjects: Project[]}) {
@@ -23,8 +24,8 @@ export default function ProjectList({ initialProjects }: { initialProjects: Proj
       return;
     }
 
-    // update projects after successful deletion
-    setProjects((prev) => prev.filter((p) => p.id !== id))
+    // update & sort projects after successful deletion
+    setProjects((prev) => sortByDate(prev.filter((p) => p.id !== id), "updatedAt"));
 
     // display success toast
     toast.success(result.data.title + " - Project Deleted");
@@ -46,7 +47,7 @@ export default function ProjectList({ initialProjects }: { initialProjects: Proj
       // otherwise display this
 	<div>
 	  <ul className="flex flex-col gap-5 items-center justify-center">
-	    {projects.map((project) => (
+	    {sortByDate(projects, "updatedAt").map((project) => (
 	      <ProjectCard
 		key={project.id}
 		project={project}

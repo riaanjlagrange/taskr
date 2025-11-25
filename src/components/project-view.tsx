@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Project } from "@/type";
+import { Project, Issue } from "@/type";
 import { toast } from "sonner";
 import { FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
@@ -9,12 +9,12 @@ import { createIssue, deleteIssue } from "@/actions/issue/actions";
 import IssueCard from "./issue-card";
 import { IssueEmpty } from "./issue-empty";
 import IssueCreateForm from "./issue-create-form";
+import { sortByDate } from "@/lib/utils";
 
 // get initial projects from server
 export default function ProjectView({ project }: { project: Project}) {
   const [isPendingSubmit, submitTransition] = useTransition();
   const [issues, setIssues] = useState(project.issues || [])
-
 
   // delete an issue
   const handleDelete = async (id: number) => {
@@ -26,8 +26,8 @@ export default function ProjectView({ project }: { project: Project}) {
       return;
     }
 
-    // update issues after successful deletion
-    setIssues((prev) => prev.filter((i) => i.id !== id))
+    // update & sort issues after successful deletion
+    setIssues((prev) => sortByDate(prev.filter((i) => i.id !== id), "updatedAt"));
 
     // display success toast
     toast.success(result.data.title + " - Issue Deleted");
@@ -48,8 +48,8 @@ export default function ProjectView({ project }: { project: Project}) {
         return;
       }
 
-      // update issues after successful creation
-      setIssues((prev) => [...prev, result.data])
+      // update & sort issues after successful creation
+      setIssues((prev) => sortByDate([...prev, result.data], "updatedAt"));
 
       // display success toast
       toast.success(result.data.title + " - Issue Created!");
@@ -87,7 +87,7 @@ export default function ProjectView({ project }: { project: Project}) {
 	<div>
 	  {/* create new issue */}
 	  <ul className="flex flex-col gap-5 items-center justify-center">
-	    {issues.map((issue) => (
+	    {sortByDate(issues, "updatedAt").map((issue) => (
 	      <IssueCard
 		key={issue.id}
 		issue={issue}
