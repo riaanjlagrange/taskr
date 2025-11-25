@@ -41,7 +41,19 @@ export async function createProject({
     // make sure projects refresh correctly
     revalidatePath("/projects")
 
-    return { success: true, data: project };
+    // convert prisma type to UI type & return
+    return {
+      success: true,
+      data: {
+	id: project.id,
+	title: project.title,
+	description: project.description,
+	userId: project.userId,
+	issues: null,
+	createdAt: project.createdAt.toISOString(),
+	updatedAt: project.updatedAt.toISOString()
+      }
+    };
   } catch (error) {
     console.error("Create project error: ", error)
     return { success: false, error: "Failed to create project" }
@@ -62,7 +74,13 @@ export async function getProjects(): Promise<ActionResponse<Project[]>> {
     // get projects from that user
     const user = await prisma.user.findUnique({
       where: { clerkId: userId },
-      include: { projects: true }
+      include: {
+	projects: {
+	  include: {
+	    issues: true
+	  }
+	} 
+      }
     })
 
     // make sure user exists
@@ -70,7 +88,27 @@ export async function getProjects(): Promise<ActionResponse<Project[]>> {
       return { success: false, error: "User not found" }
     }
 
-    return { success: true, data: user.projects || []}
+    // convert to ui type
+    return {
+      success: true,
+      data: user.projects.map((p) => ({
+	id: p.id,
+	title: p.title,
+	description: p.description,
+	userId: p.userId,
+	issues: p.issues?.map((i) => ({
+	  id: i.id,
+	  title: i.title,
+	  status: i.status,
+	  priority: i.priority,
+	  projectId: i.projectId,
+	  createdAt: i.createdAt.toISOString(),
+	  updatedAt: i.updatedAt.toISOString(),
+	})) ?? null,
+	createdAt: p.createdAt.toISOString(),
+	updatedAt: p.updatedAt.toISOString()
+      }))
+    }
   } catch (error) {
     console.error("Get projects error: ", error)
     return { success: false, error: "Failed to fetch projects" }
@@ -104,7 +142,27 @@ export async function getProjectById(projectId: number): Promise<ActionResponse<
       return { success: false, error: "Project not found" };
     }
 
-    return { success: true, data: project }
+    // convert to ui type
+    return {
+      success: true,
+      data: {
+	id: project.id,
+	title: project.title,
+	description: project.description,
+	userId: project.userId,
+	issues: project.issues?.map((i) => ({
+	  id: i.id,
+	  title: i.title,
+	  status: i.status,
+	  priority: i.priority,
+	  projectId: i.projectId,
+	  createdAt: i.createdAt.toISOString(),
+	  updatedAt: i.updatedAt.toISOString(),
+	})) ?? null,
+	createdAt: project.createdAt.toISOString(),
+	updatedAt: project.updatedAt.toISOString()
+      }
+    };
   } catch (error) {
     console.error("Get project error ", error)
     return { success: false, error: "Failed to fetch project" }
@@ -149,12 +207,34 @@ export async function updateProject({
         ...(title && { title }),
         ...(description && { description }),
       },
+      include: {
+	issues: true,
+      }
     });
 
     // refresh path
     revalidatePath("/projects")
 
-    return { success: true, data: updatedProject }
+    return {
+      success: true,
+      data: {
+	id: updatedProject.id,
+	title: updatedProject.title,
+	description: updatedProject.description,
+	userId: updatedProject.userId,
+	issues: updatedProject.issues?.map((i) => ({
+	  id: i.id,
+	  title: i.title,
+	  status: i.status,
+	  priority: i.priority,
+	  projectId: i.projectId,
+	  createdAt: i.createdAt.toISOString(),
+	  updatedAt: i.updatedAt.toISOString(),
+	})) ?? null,
+	createdAt: updatedProject.createdAt.toISOString(),
+	updatedAt: updatedProject.updatedAt.toISOString()
+      }
+    };
   } catch (error) {
     console.error("Project update error: ", error)
     return { success: false, error: "Failed to update project"}
@@ -191,7 +271,17 @@ export async function deleteProjectById(projectId: number): Promise<ActionRespon
 
     revalidatePath("/projects")
     
-    return { success: true, data: project };
+    return {
+      success: true,
+      data: {
+	id: project.id,
+	title: project.title,
+	description: project.description,
+	userId: project.userId,
+	createdAt: project.createdAt.toISOString(),
+	updatedAt: project.updatedAt.toISOString()
+      }
+    };
   } catch (error) {
     console.error("Delete project error:", error);
     return { success: false, error: "Failed to delete project" };

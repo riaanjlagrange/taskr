@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { ActionResponse, Issue } from "@/type";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 
 // create a new issue
@@ -47,7 +48,22 @@ export async function createIssue({
       },
     });
 
-    return { success: true, data: issue };
+    // revalidate
+    revalidatePath(`/project/${projectId}`)
+
+    // return data formatted to ui type
+    return {
+      success: true,
+      data: {
+	id: issue.id,
+	projectId: issue.projectId,
+	title: issue.title,
+	status: issue.status,
+	priority: issue.priority,
+	createdAt: issue.createdAt.toISOString(),
+	updatedAt: issue.updatedAt.toISOString(),
+      } 
+    };
   } catch (error) {
     console.error("Create issue error:", error);
     return { success: false, error: "Failed to create issue" };
@@ -99,7 +115,22 @@ export async function updateIssue({
       },
     });
 
-    return { success: true, data: updatedIssue };
+    // revalidate
+    revalidatePath(`/project/${updatedIssue.projectId}`)
+
+    // return data formatted to ui type
+    return {
+      success: true,
+      data: {
+	id: issue.id,
+	projectId: issue.projectId,
+	title: issue.title,
+	status: issue.status,
+	priority: issue.priority,
+	createdAt: issue.createdAt.toISOString(),
+	updatedAt: issue.updatedAt.toISOString(),
+      } 
+    };
   } catch (error) {
     console.error("Update issue error:", error);
     return { success: false, error: "Failed to update issue" };
@@ -109,7 +140,7 @@ export async function updateIssue({
 
 // delete an issue
 
-export async function deleteIssue(issueId: number): Promise<ActionResponse> {
+export async function deleteIssue(issueId: number): Promise<ActionResponse<Issue>> {
   try {
     // make sure user is signed in
     const { userId } = await auth();
@@ -136,7 +167,22 @@ export async function deleteIssue(issueId: number): Promise<ActionResponse> {
       where: { id: issueId } 
     });
 
-    return { success: true, data: undefined };
+    // revalidate
+    revalidatePath(`/project/${issue.projectId}`)
+
+    // return data formatted to ui type
+    return {
+      success: true,
+      data: {
+	id: issue.id,
+	projectId: issue.projectId,
+	title: issue.title,
+	status: issue.status,
+	priority: issue.priority,
+	createdAt: issue.createdAt.toISOString(),
+	updatedAt: issue.updatedAt.toISOString(),
+      } 
+    };
   } catch (error) {
     console.error("Delete issue error:", error);
     return { success: false, error: "Failed to delete issue" };

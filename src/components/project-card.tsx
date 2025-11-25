@@ -26,7 +26,7 @@ export default function ProjectCard({
 	<ItemDescription>{description}</ItemDescription>
       </ItemContent>
       <span className="text-zinc-500 text-xs">
-	{createdAt.toLocaleDateString("en-ZA")}
+	{createdAt}
       </span>
       <ItemActions>
 	<Link href={`/project/${id}`}>
