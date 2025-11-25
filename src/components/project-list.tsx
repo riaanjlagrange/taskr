@@ -12,25 +12,22 @@ import Link from "next/link";
 
 // get initial projects from server
 export default function ProjectList({ initialProjects }: { initialProjects: Project[]}) {
-  const [isPending, startTransition] = useTransition();
   const [projects, setProjects] = useState(initialProjects || [])
 
-  const handleDelete = (id: number) => {
-    startTransition(async () => {
-      const result = await deleteProjectById(id);
+  const handleDelete = async (id: number) => {
+    const result = await deleteProjectById(id);
 
-      // if submission fails, show error in toast
-      if (!result.success) {
-	toast.error(result.error);
-	return;
-      }
+    // if submission fails, show error in toast
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
 
-      // update projects after successful deletion
-      setProjects((prev) => prev.filter((p) => p.id !== id))
+    // update projects after successful deletion
+    setProjects((prev) => prev.filter((p) => p.id !== id))
 
-      // display success toast
-      toast.success(result.data.title + " - Project Deleted");
-    })
+    // display success toast
+    toast.success(result.data.title + " - Project Deleted");
   }
 
   return (
@@ -54,7 +51,6 @@ export default function ProjectList({ initialProjects }: { initialProjects: Proj
 		key={project.id}
 		project={project}
 		onDeleteAction={() => handleDelete(project.id)}
-		isPending={isPending}
 	      />
 	    ))}
 	  </ul>
