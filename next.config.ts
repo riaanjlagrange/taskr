@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  serverExternalPackages: ['@libsql/client', '@prisma/adapter-libsql'],
+  serverExternalPackages: ['@prisma/client', '@prisma/adapter-pg'],
   allowedDevOrigins: [
     "http://192.168.8.*:*"
   ],

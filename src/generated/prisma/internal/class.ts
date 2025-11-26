@@ -19,8 +19,8 @@ const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
   "clientVersion": "7.0.0",
   "engineVersion": "0c19ccc313cf9911a90d99d2ac2eb0280c76c513",
-  "activeProvider": "sqlite",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"sqlite\"\n}\n\nmodel User {\n  id       Int       @id @default(autoincrement())\n  clerkId  String    @unique\n  projects Project[]\n}\n\nmodel Project {\n  id          Int      @id @default(autoincrement())\n  title       String\n  description String   @default(\"\")\n  userId      Int\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade) // foreign key to User\n  issues      Issue[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  @@index([userId])\n}\n\nmodel Issue {\n  id        Int      @id @default(autoincrement())\n  title     String\n  status    String   @default(\"open\") // open / closed\n  priority  String   @default(\"medium\") // low / medium / high\n  projectId Int\n  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade) // foreign key to Project\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([projectId])\n}\n",
+  "activeProvider": "postgresql",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id       Int       @id @default(autoincrement())\n  clerkId  String    @unique\n  projects Project[]\n}\n\nmodel Project {\n  id          Int      @id @default(autoincrement())\n  title       String\n  description String   @default(\"\")\n  userId      Int\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade) // foreign key to User\n  issues      Issue[]\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  @@index([userId])\n}\n\nmodel Issue {\n  id        Int      @id @default(autoincrement())\n  title     String\n  status    String   @default(\"open\") // open / closed\n  priority  String   @default(\"medium\") // low / medium / high\n  projectId Int\n  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade) // foreign key to Project\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@index([projectId])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -37,10 +37,10 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.sqlite.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.sqlite.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
     return await decodeBase64AsWasm(wasm)
   }
 }

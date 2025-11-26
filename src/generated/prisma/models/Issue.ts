@@ -474,6 +474,7 @@ export type IssueCreateOrConnectWithoutProjectInput = {
 
 export type IssueCreateManyProjectInputEnvelope = {
   data: Prisma.IssueCreateManyProjectInput | Prisma.IssueCreateManyProjectInput[]
+  skipDuplicates?: boolean
 }
 
 export type IssueUpsertWithWhereUniqueWithoutProjectInput = {
@@ -1269,6 +1270,7 @@ export type IssueCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Issues.
    */
   data: Prisma.IssueCreateManyInput | Prisma.IssueCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1287,6 +1289,7 @@ export type IssueCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Issues.
    */
   data: Prisma.IssueCreateManyInput | Prisma.IssueCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */
