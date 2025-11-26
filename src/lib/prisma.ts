@@ -9,7 +9,7 @@ const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     adapter: new PrismaLibSql({
-      url: `file:${process.cwd()}/prisma/app.db`,
+      url: process.env.DATABASE_URL || 'file:./prisma/app.db',
     }),
   });
 

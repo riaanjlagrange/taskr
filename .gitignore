@@ -42,7 +42,7 @@ next-env.d.ts
 
 # database
 # /prisma/app.db
-# /src/generated/prisma
+/src/generated/prisma
 
 # clerk configuration (can include secrets)
 /.clerk/
