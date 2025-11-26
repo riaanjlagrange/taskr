@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "db:reset": "npx prisma db push --force-reset",
+    "db:recreate": "npx prisma db push --force-reset && npx prisma db push",
+    "postinstall": "prisma generate",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint"
