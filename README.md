@@ -7,7 +7,7 @@ Taskr is a full-stack web application designed to help you manage your projects 
 This project is built with a modern technology stack:
 
 -   **Framework:** [Next.js](https://nextjs.org/)
--   **Database:** [SQLite](https://www.sqlite.org/index.html)
+-   **Database:** [PostgreSQL](https://www.postgresql.org/)
 -   **ORM:** [Prisma](https://www.prisma.io/)
 -   **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 -   **Authentication:** [Clerk](https://clerk.com/)
@@ -67,7 +67,7 @@ The project follows a standard Next.js App Router structure:
 
 ## Database
 
-This project uses **SQLite** as its database, with **Prisma** as the ORM. The database schema is defined in the `prisma/schema.prisma` file.
+This project uses **PostgreSQL** as its database, with **Prisma** as the ORM. The database schema is defined in the `prisma/schema.prisma` file.
 
 When you make changes to the schema, you can create a new migration with:
 
