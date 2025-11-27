@@ -4,7 +4,7 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from "@/co
 import { Project } from "@/type";
 import Link from "next/link";
 import { Button } from "./ui/button";
-import { IconTrashFilled } from "@tabler/icons-react";
+import { IconEdit, IconTrashFilled } from "@tabler/icons-react";
 
 export default function ProjectCard({
   project,
@@ -28,6 +28,11 @@ export default function ProjectCard({
 	<Link href={`/project/${id}`}>
 	  <Button variant="outline" size="sm">
 	    View Project
+	  </Button>
+	</Link>
+	<Link href={`/project/${id}/update`}>
+	  <Button variant="outline" size="sm">
+	    <IconEdit />
 	  </Button>
 	</Link>
 	<Button

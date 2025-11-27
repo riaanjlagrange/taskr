@@ -1,0 +1,101 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { updateProject } from "../actions/project/actions";
+import { toast } from "sonner";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { useRouter } from "next/navigation";
+import { Project } from "@/type";
+
+export default function ProjectEditForm({ initialProject }: { initialProject: Project }) {
+  const [title, setTitle] = useState(initialProject.title)
+  const [description, setDescription] = useState(initialProject.title)
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  async function handleSubmit(formData: FormData) {
+    // reset error when submitting
+    setError(null);
+
+    startTransition(async () => {
+      const result = await updateProject({
+	projectId: initialProject.id,
+	title: formData.get('title') as string,
+	description: formData.get('description') as string,
+      })
+
+      // if submission fails, show error in toast
+      if (!result.success) {
+	setError(result.error);
+	toast.error(result.error);
+	return;
+      }
+
+      // display success toast & redirect to project page
+      toast.success(result.data.title + " - Project Updated!");
+      router.push(`/project/${initialProject.id}`)
+    })
+  }
+
+  return (
+      <form action={handleSubmit} className="border border-zinc-800 p-6 rounded-md w-full">
+      <FieldSet>
+	<FieldLegend>Update Project</FieldLegend>
+	<FieldGroup>
+	  <Field>
+	    <FieldLabel htmlFor="title">Project Title</FieldLabel>
+	    <Input
+	      id="title"
+	      name="title"
+	      autoComplete="off"
+	      placeholder="Taskr"
+	      value={title}
+	      onChange={(e) => setTitle(e.target.value)}
+	      required
+	    />
+	  </Field>
+	  <Field>
+	    <FieldLabel htmlFor="description">Project Description</FieldLabel>
+	    <Input
+	      id="description"
+	      name="description"
+	      autoComplete="off"
+	      placeholder="an Amazing App"
+	      value={description}
+	      onChange={(e) => setDescription(e.target.value)}
+	      required
+	    />
+	  </Field>
+	</FieldGroup>
+	<Field orientation="horizontal">
+	  <Button 
+	    type="submit"
+	    disabled={isPending}
+	  >
+	    {isPending ? <Spinner /> : "Update Project"}
+	  </Button>
+	  <Button
+	    variant="outline"
+	    type="button"
+	    disabled={isPending}
+	    onClick={() => router.back()}
+	  >
+	    Cancel
+	  </Button>
+	</Field>
+	{error && <FieldError>{error}</FieldError>}
+      </FieldSet>
+    </form>
+  )
+}
