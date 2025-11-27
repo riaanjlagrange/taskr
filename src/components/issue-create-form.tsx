@@ -41,7 +41,7 @@ export default function IssueCreateForm({
               id="title"
               name="title"
               autoComplete="off"
-              placeholder="Ex. Header not showing up on contact page"
+              placeholder="Shortly describe issue..."
 	      className="h-10"
               required
             />

@@ -55,7 +55,7 @@ export default function ProjectCreateForm() {
 	      id="title"
 	      name="title"
 	      autoComplete="off"
-	      placeholder="Taskr"
+	      placeholder="Example: Taskr"
 	      required
 	    />
 	  </Field>
@@ -65,7 +65,7 @@ export default function ProjectCreateForm() {
 	      id="description"
 	      name="description"
 	      autoComplete="off"
-	      placeholder="an Amazing App"
+	      placeholder="Shortly describe your project..."
 	      required
 	    />
 	  </Field>

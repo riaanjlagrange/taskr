@@ -16,11 +16,22 @@ export default function IssueCard({
 }) {
   const { id, title, priority } = issue;
 
+  const priorityStyling = (priority: string): string => {
+    switch (priority) {
+	case "HIGH":
+	  return "text-red-300";
+	case "MEDIUM":
+	  return "text-orange-300";
+	default:
+	  return "text-green-200"
+    }
+  }
+
   return (
     <Item variant="outline" className="w-full" key={id}>
       <ItemContent className="truncate">
 	<ItemTitle>{title}</ItemTitle>
-	<ItemDescription>{priority}</ItemDescription>
+	<ItemDescription className={priorityStyling(issue.priority)}>{priority} PRIORITY</ItemDescription>
       </ItemContent>
       <ItemActions className="shrink-0">
 	{issue.status === "open" ? (

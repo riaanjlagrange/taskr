@@ -59,7 +59,7 @@ export default function ProjectEditForm({ initialProject }: { initialProject: Pr
 	      id="title"
 	      name="title"
 	      autoComplete="off"
-	      placeholder="Taskr"
+	      placeholder="Example: Taskr"
 	      value={title}
 	      onChange={(e) => setTitle(e.target.value)}
 	      required
@@ -71,7 +71,7 @@ export default function ProjectEditForm({ initialProject }: { initialProject: Pr
 	      id="description"
 	      name="description"
 	      autoComplete="off"
-	      placeholder="an Amazing App"
+	      placeholder="Shortly describe your project..."
 	      value={description}
 	      onChange={(e) => setDescription(e.target.value)}
 	      required
