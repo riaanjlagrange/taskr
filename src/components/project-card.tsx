@@ -5,6 +5,7 @@ import { Project } from "@/type";
 import Link from "next/link";
 import { Button } from "./ui/button";
 import { IconEdit, IconTrashFilled } from "@tabler/icons-react";
+import { filterIssuesByStatus } from "@/lib/utils";
 
 export default function ProjectCard({
   project,
@@ -13,16 +14,17 @@ export default function ProjectCard({
   project: Project,
   onDeleteAction: (id: number) => void,
 }) {
-  const { id, title, description, createdAt } = project;
+  const { id, title, description } = project;
 
   return (
     <Item variant="outline" className="w-full" key={id}>
-      <ItemContent>
+      <ItemContent className="truncate">
 	<ItemTitle>{title}</ItemTitle>
 	<ItemDescription>{description}</ItemDescription>
       </ItemContent>
-      <span className="text-zinc-500 text-xs">
-	{createdAt}
+      <span className="text-zinc-300">
+	{project?.issues && filterIssuesByStatus(project.issues, "open").length}
+	{' '} Issues
       </span>
       <ItemActions>
 	<Link href={`/project/${id}`}>

@@ -90,7 +90,7 @@ export default function ProjectView({ project }: { project: Project}) {
 
       {/* project details and action buttons */}
       <div className="flex justify-between mb-4">
-	<div className="flex gap-6 items-center">
+	<div className="flex gap-6 items-center w-full truncate">
 	  <Link href="/projects">
 	    <FaAngleLeft />
 	  </Link>
@@ -104,9 +104,9 @@ export default function ProjectView({ project }: { project: Project}) {
       </div>
 
       {/* description */}
-      <div>
+      <div className="w-full overflow-scroll pb-5">
 	<h2 className="text-md text-zinc-500">Description</h2>
-	<span className="ml-4">{project.description}</span>
+	<p className="ml-4 line-clamp-3">{project.description}</p>
       </div>
 
       <div className="my-5 w-full flex justify-center">

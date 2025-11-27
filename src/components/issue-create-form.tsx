@@ -30,8 +30,9 @@ export default function IssueCreateForm({
       } className="border border-zinc-800 p-4 rounded-md w-full">
       <FieldSet className="flex  w-full justify-between items-end text-xs">
         <FieldGroup className="flex flex-col md:flex-row w-full gap-2 justify-between items-center">
+
           {/* issue title */}
-          <Field className="w-full">
+          <Field className="md:w-2/3 w-full">
 	    <FieldLabel htmlFor="title">Submit Issue</FieldLabel>
             <Input
               id="title"
@@ -44,7 +45,7 @@ export default function IssueCreateForm({
           </Field>
           
           {/* issue priority */}
-	  <Field className="flex-1">
+	  <Field className="md:w-1/3 w-full">
 	    <FieldLabel htmlFor="priority">Priority</FieldLabel>
 	    <Select name="priority" defaultValue="MEDIUM" required>
 	      <SelectTrigger className="border border-zinc-700 bg-zinc-900 h-10 px-3 py-2 rounded-md">

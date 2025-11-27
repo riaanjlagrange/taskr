@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import Image from "next/image";
-import { SignIn, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton } from "@clerk/nextjs";
 
 export default async function Home() {
   // get current user from clerk
@@ -38,7 +38,7 @@ export default async function Home() {
 
   // else if user is signed in, show this
   return (
-    <main className="lg:max-w-[50vw] md:max-w-[65vw] max-w-[80vw] mx-auto pt-8">
+    <main className="lg:max-w-[80vw] md:max-w-[90vw] max-w-[95vw] mx-auto pt-8">
       <section className="w-full flex flex-col items-center justify-center">
 	{/* hero image */}
 	<Image

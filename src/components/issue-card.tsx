@@ -18,11 +18,11 @@ export default function IssueCard({
 
   return (
     <Item variant="outline" className="w-full" key={id}>
-      <ItemContent>
+      <ItemContent className="truncate">
 	<ItemTitle>{title}</ItemTitle>
 	<ItemDescription>{priority}</ItemDescription>
       </ItemContent>
-      <ItemActions>
+      <ItemActions className="shrink-0">
 	{issue.status === "open" ? (
 	  <Button
 	    variant="outline"

@@ -10,7 +10,7 @@ export default async function Project({
   const id  = parseInt((await params).id, 10);
 
   return (
-    <section className="lg:max-w-[50vw] md:max-w-[65vw] max-w-[80vw] mx-auto pt-8">
+    <section className="lg:max-w-[80vw] md:max-w-[90vw] max-w-[95vw] mx-auto pt-8">
       <ProjectViewServer id={id} />
     </section>
   )
