@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import { IconEdit } from "@tabler/icons-react";
 import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
 import { AccordionItem } from "./ui/accordion";
+import { ChevronDown } from "lucide-react";
 
 // get initial projects from server
 export default function ProjectView({ project }: { project: Project}) {
@@ -104,7 +105,8 @@ export default function ProjectView({ project }: { project: Project}) {
 
       {/* description */}
       <div>
-	<span>{project.description}</span>
+	<h2 className="text-md text-zinc-500">Description</h2>
+	<span className="ml-4">{project.description}</span>
       </div>
 
       <div className="my-5 w-full flex justify-center">
@@ -119,43 +121,47 @@ export default function ProjectView({ project }: { project: Project}) {
 	<IssueEmpty />
       ): (
       // otherwise display this
-	<div>
-	   <Accordion
-	      type="single"
-	      collapsible
-	      className="w-full"
-	      defaultValue="status-open"
-	  >
-	    <AccordionItem value="status-open">
-	      <AccordionTrigger className="mb-4">Open Issues</AccordionTrigger>
-	      <AccordionContent className="text-balance mb-4">
-		<ul className="flex flex-col gap-5 items-center justify-center">
-		  {filterIssuesByStatus(sortByDate(issues, "updatedAt"), "open").map((issue) => ( <IssueCard
-		      key={issue.id}
-		      issue={issue}
-		      onDeleteAction={handleDelete}
-		      onUpdateStatusAction={handleUpdateStatus}
-		    />
-		  ))}
-		</ul>
-	      </AccordionContent>
-	      </AccordionItem>
-	    <AccordionItem value="status-closed">
-	      <AccordionTrigger className="my-2">Closed Issues</AccordionTrigger>
-	      <AccordionContent className="text-balance mb-4">
-		<ul className="flex flex-col gap-5 items-center justify-center">
-		  {filterIssuesByStatus(sortByDate(issues, "updatedAt"), "closed").map((issue) => ( <IssueCard
-		      key={issue.id}
-		      issue={issue}
-		      onDeleteAction={handleDelete}
-		      onUpdateStatusAction={handleUpdateStatus}
-		    />
-		  ))}
-		</ul>
-	      </AccordionContent>
+	<Accordion
+	    type="single"
+	    collapsible
+	    className="w-full"
+	    defaultValue="status-open"
+	>
+	  <AccordionItem value="status-open">
+	    <AccordionTrigger className="mb-4 flex justify-center items-center gap-2 cursor-pointer [&[data-state=open]>svg]:rotate-180">
+	      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-300" />
+	      <span>Open Issues {filterIssuesByStatus(issues, "open").length !== 0 && '( ' + filterIssuesByStatus(issues, "open").length + ' )'}</span>
+	    </AccordionTrigger>
+	    <AccordionContent className="text-balance">
+	      <ul className="flex flex-col gap-5 items-center justify-center">
+		{filterIssuesByStatus(sortByDate(issues, "updatedAt"), "open").map((issue) => ( <IssueCard
+		    key={issue.id}
+		    issue={issue}
+		    onDeleteAction={handleDelete}
+		    onUpdateStatusAction={handleUpdateStatus}
+		  />
+		))}
+	      </ul>
+	    </AccordionContent>
 	    </AccordionItem>
-	  </Accordion>
-	</div>
+	  <AccordionItem value="status-closed">
+	    <AccordionTrigger className="my-4 flex justify-center items-center gap-2 cursor-pointer [&[data-state=open]>svg]:rotate-180">
+	      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-300" />
+	      <span>Closed Issues {filterIssuesByStatus(issues, "closed").length !== 0 && '( ' + filterIssuesByStatus(issues, "closed").length + ' )'}</span>
+	    </AccordionTrigger>
+	    <AccordionContent className="text-balance mb-4">
+	      <ul className="flex flex-col gap-5 items-center justify-center">
+		{filterIssuesByStatus(sortByDate(issues, "updatedAt"), "closed").map((issue) => ( <IssueCard
+		    key={issue.id}
+		    issue={issue}
+		    onDeleteAction={handleDelete}
+		    onUpdateStatusAction={handleUpdateStatus}
+		  />
+		))}
+	      </ul>
+	    </AccordionContent>
+	  </AccordionItem>
+	</Accordion>
       )}
     </section>
     
