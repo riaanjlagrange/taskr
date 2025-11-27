@@ -1,15 +1,19 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Project, Issue } from "@/type";
+import { Project } from "@/type";
 import { toast } from "sonner";
 import { FaAngleLeft } from "react-icons/fa6";
 import Link from "next/link";
-import { createIssue, deleteIssue } from "@/actions/issue/actions";
+import { createIssue, deleteIssue, updateIssue } from "@/actions/issue/actions";
 import IssueCard from "./issue-card";
 import { IssueEmpty } from "./issue-empty";
 import IssueCreateForm from "./issue-create-form";
-import { sortByDate } from "@/lib/utils";
+import { filterIssuesByStatus, sortByDate, updateItemInList } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { IconEdit } from "@tabler/icons-react";
+import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
+import { AccordionItem } from "./ui/accordion";
 
 // get initial projects from server
 export default function ProjectView({ project }: { project: Project}) {
@@ -33,13 +37,37 @@ export default function ProjectView({ project }: { project: Project}) {
     toast.success(result.data.title + " - Issue Deleted");
   }
 
+  // update issues status (open / closed)
+  const handleUpdateStatus = async (id: number, status: string) => {
+    const result = await updateIssue({
+      issueId: id,
+      status: status
+    });
+
+    // if update fails, show error in toast
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
+    // update & sort issues after successful deletion
+    setIssues((prev) => updateItemInList(prev, id, { status: status }));
+
+    // display success toast
+    if (status == "open") {
+      toast.success(result.data.title + " - Issue Re-opened");
+    } else {
+      toast.success(result.data.title + " - Issue Closed");
+    }
+  }
+
   // create a new issue
   async function handleSubmit(formData: FormData) {
     submitTransition(async () => {
       const result = await createIssue({
         projectId: project.id,
         title: formData.get('title') as string,
-        status: formData.get('status') as string,
+        status: "open", // set issue as open by default
         priority: formData.get('priority') as string,
       })
       // if submission fails, show error in toast
@@ -59,12 +87,19 @@ export default function ProjectView({ project }: { project: Project}) {
   return (
     <section className="w-full">
 
-      {/* title & back button */}
-      <div className="flex gap-6 items-center mb-4">
-	<Link href="/projects">
-	  <FaAngleLeft />
+      {/* project details and action buttons */}
+      <div className="flex justify-between mb-4">
+	<div className="flex gap-6 items-center">
+	  <Link href="/projects">
+	    <FaAngleLeft />
+	  </Link>
+	  <h1 className="text-xl font-bold">{project.title}</h1>
+	</div>
+	<Link href={`/project/${project.id}/update`}>
+	  <Button variant="outline" size="sm">
+	    <IconEdit />
+	  </Button>
 	</Link>
-	<h1 className="text-xl font-bold">{project.title}</h1>
       </div>
 
       {/* description */}
@@ -85,16 +120,41 @@ export default function ProjectView({ project }: { project: Project}) {
       ): (
       // otherwise display this
 	<div>
-	  {/* create new issue */}
-	  <ul className="flex flex-col gap-5 items-center justify-center">
-	    {sortByDate(issues, "updatedAt").map((issue) => (
-	      <IssueCard
-		key={issue.id}
-		issue={issue}
-		onDeleteAction={() => handleDelete(issue.id)}
-	      />
-	    ))}
-	  </ul>
+	   <Accordion
+	      type="single"
+	      collapsible
+	      className="w-full"
+	      defaultValue="status-open"
+	  >
+	    <AccordionItem value="status-open">
+	      <AccordionTrigger className="mb-4">Open Issues</AccordionTrigger>
+	      <AccordionContent className="text-balance mb-4">
+		<ul className="flex flex-col gap-5 items-center justify-center">
+		  {filterIssuesByStatus(sortByDate(issues, "updatedAt"), "open").map((issue) => ( <IssueCard
+		      key={issue.id}
+		      issue={issue}
+		      onDeleteAction={handleDelete}
+		      onUpdateStatusAction={handleUpdateStatus}
+		    />
+		  ))}
+		</ul>
+	      </AccordionContent>
+	      </AccordionItem>
+	    <AccordionItem value="status-closed">
+	      <AccordionTrigger className="my-2">Closed Issues</AccordionTrigger>
+	      <AccordionContent className="text-balance mb-4">
+		<ul className="flex flex-col gap-5 items-center justify-center">
+		  {filterIssuesByStatus(sortByDate(issues, "updatedAt"), "closed").map((issue) => ( <IssueCard
+		      key={issue.id}
+		      issue={issue}
+		      onDeleteAction={handleDelete}
+		      onUpdateStatusAction={handleUpdateStatus}
+		    />
+		  ))}
+		</ul>
+	      </AccordionContent>
+	    </AccordionItem>
+	  </Accordion>
 	</div>
       )}
     </section>
