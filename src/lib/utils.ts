@@ -25,6 +25,27 @@ export function filterIssuesByStatus(
   return [...issues].filter(i => i.status === status);
 }
 
+export const sortIssuesByPriority = (issues: Issue[]): Issue[] => {
+  const priorityOrder: Record<string, number> = { 
+    high: 1, 
+    medium: 2, 
+    low: 3 
+  };
+  
+  return [...issues].sort((a, b) => {
+    // First, sort by priority
+    const orderA = priorityOrder[a.priority.toLowerCase()] ?? 999;
+    const orderB = priorityOrder[b.priority.toLowerCase()] ?? 999;
+    
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+    
+    // If priority is the same, sort by updatedAt (newest first)
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
+};
+
 export function updateItemInList<T extends { id: string | number }>(
   list: T[],
   id: T["id"],

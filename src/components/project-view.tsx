@@ -9,7 +9,7 @@ import { createIssue, deleteIssue, updateIssue } from "@/actions/issue/actions";
 import IssueCard from "./issue-card";
 import { IssueEmpty } from "./issue-empty";
 import IssueCreateForm from "./issue-create-form";
-import { filterIssuesByStatus, sortByDate, updateItemInList } from "@/lib/utils";
+import { filterIssuesByStatus, sortIssuesByPriority, updateItemInList } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { IconEdit } from "@tabler/icons-react";
 import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
@@ -32,7 +32,9 @@ export default function ProjectView({ project }: { project: Project}) {
     }
 
     // update & sort issues after successful deletion
-    setIssues((prev) => sortByDate(prev.filter((i) => i.id !== id), "updatedAt"));
+    setIssues((prev) => 
+      sortIssuesByPriority(prev.filter((i) => i.id !== id))
+    );
 
     // display success toast
     toast.success(result.data.title + " - Issue Deleted");
@@ -52,7 +54,9 @@ export default function ProjectView({ project }: { project: Project}) {
     }
 
     // update & sort issues after successful deletion
-    setIssues((prev) => updateItemInList(prev, id, { status: status }));
+    setIssues((prev) => 
+      sortIssuesByPriority(updateItemInList(prev, id, { status: status }))
+    );
 
     // display success toast
     if (status == "open") {
@@ -78,12 +82,20 @@ export default function ProjectView({ project }: { project: Project}) {
       }
 
       // update & sort issues after successful creation
-      setIssues((prev) => sortByDate([...prev, result.data], "updatedAt"));
+      setIssues((prev) => 
+	sortIssuesByPriority([...prev, result.data])
+      );
 
       // display success toast
       toast.success(result.data.title + " - Issue Created!");
     })
   }
+
+
+  // issue filtering
+  const openIssues = filterIssuesByStatus(issues, "open");
+  const closedIssues = filterIssuesByStatus(issues, "closed");
+
 
   return (
     <section className="w-full">
@@ -104,7 +116,7 @@ export default function ProjectView({ project }: { project: Project}) {
       </div>
 
       {/* description */}
-      <div className="w-full overflow-scroll pb-5">
+      <div className="w-full pb-5">
 	<h2 className="text-md text-zinc-500">Description</h2>
 	<p className="ml-4 line-clamp-3">{project.description}</p>
       </div>
@@ -130,11 +142,14 @@ export default function ProjectView({ project }: { project: Project}) {
 	  <AccordionItem value="status-open">
 	    <AccordionTrigger className="mb-4 flex justify-center items-center gap-2 cursor-pointer [&[data-state=open]>svg]:rotate-180">
 	      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-300" />
-	      <span>Open Issues {filterIssuesByStatus(issues, "open").length !== 0 && '( ' + filterIssuesByStatus(issues, "open").length + ' )'}</span>
+	      <span>
+		Open Issues {openIssues.length !== 0 && `(${openIssues.length})`}
+	      </span>
 	    </AccordionTrigger>
 	    <AccordionContent className="text-balance">
 	      <ul className="flex flex-col gap-5 items-center justify-center">
-		{filterIssuesByStatus(sortByDate(issues, "updatedAt"), "open").map((issue) => ( <IssueCard
+		{openIssues.map((issue) => (
+		  <IssueCard
 		    key={issue.id}
 		    issue={issue}
 		    onDeleteAction={handleDelete}
@@ -147,11 +162,14 @@ export default function ProjectView({ project }: { project: Project}) {
 	  <AccordionItem value="status-closed">
 	    <AccordionTrigger className="my-4 flex justify-center items-center gap-2 cursor-pointer [&[data-state=open]>svg]:rotate-180">
 	      <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-300" />
-	      <span>Closed Issues {filterIssuesByStatus(issues, "closed").length !== 0 && '( ' + filterIssuesByStatus(issues, "closed").length + ' )'}</span>
+	      <span>
+		Closed Issues {closedIssues.length !== 0 && `(${closedIssues.length})`}
+	      </span>
 	    </AccordionTrigger>
 	    <AccordionContent className="text-balance mb-4">
 	      <ul className="flex flex-col gap-5 items-center justify-center">
-		{filterIssuesByStatus(sortByDate(issues, "updatedAt"), "closed").map((issue) => ( <IssueCard
+		{closedIssues.map((issue) => (
+		  <IssueCard
 		    key={issue.id}
 		    issue={issue}
 		    onDeleteAction={handleDelete}
