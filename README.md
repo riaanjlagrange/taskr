@@ -2,6 +2,8 @@
 
 Taskr is a full-stack web application designed to help you manage your projects and track associated issues. It provides a clean and intuitive interface for creating projects, adding issues, and monitoring their status.
 
+![Demo](./public/demo.gif)
+
 ## Tech Stack
 
 This project is built with a modern technology stack:
