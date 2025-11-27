@@ -11,10 +11,12 @@ import { IssueEmpty } from "./issue-empty";
 import IssueCreateForm from "./issue-create-form";
 import { filterIssuesByStatus, sortIssuesByPriority, updateItemInList } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { IconEdit } from "@tabler/icons-react";
+import { IconEdit, IconTrashFilled } from "@tabler/icons-react";
 import { Accordion, AccordionContent, AccordionTrigger } from "@radix-ui/react-accordion";
 import { AccordionItem } from "./ui/accordion";
 import { ChevronDown } from "lucide-react";
+import { deleteProjectById } from "@/actions/project/actions";
+import { redirect } from "next/navigation";
 
 // get initial projects from server
 export default function ProjectView({ project }: { project: Project}) {
@@ -92,6 +94,23 @@ export default function ProjectView({ project }: { project: Project}) {
   }
 
 
+  const handleDeleteProject = async (id: number) => {
+    const result = await deleteProjectById(id);
+
+    // if submission fails, show error in toast
+    if (!result.success) {
+      toast.error(result.error);
+      return;
+    }
+
+    // display success toast
+    toast.success(result.data.title + " - Project Deleted");
+
+    // redirect back to projects view
+    redirect("/projects")
+  }
+
+
   // issue filtering
   const openIssues = filterIssuesByStatus(issues, "open");
   const closedIssues = filterIssuesByStatus(issues, "closed");
@@ -108,11 +127,16 @@ export default function ProjectView({ project }: { project: Project}) {
 	  </Link>
 	  <h1 className="text-xl font-bold">{project.title}</h1>
 	</div>
-	<Link href={`/project/${project.id}/update`}>
-	  <Button variant="outline" size="sm">
-	    <IconEdit />
+	<div className="flex gap-2">
+	  <Link href={`/project/${project.id}/update`}>
+	    <Button variant="outline" size="sm">
+	      <IconEdit />
+	    </Button>
+	  </Link>
+	  <Button onClick={() => handleDeleteProject(project.id)} variant="outline" size="sm">
+	    <IconTrashFilled fill="#883333" />
 	  </Button>
-	</Link>
+	</div>
       </div>
 
       {/* description */}
