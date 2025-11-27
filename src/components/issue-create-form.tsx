@@ -41,7 +41,7 @@ export default function IssueCreateForm({
               id="title"
               name="title"
               autoComplete="off"
-              placeholder="Shortly describe issue..."
+              placeholder="Briefly describe issue..."
 	      className="h-10"
               required
             />
