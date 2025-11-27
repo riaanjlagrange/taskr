@@ -71,7 +71,7 @@ export default function ProjectEditForm({ initialProject }: { initialProject: Pr
 	      id="description"
 	      name="description"
 	      autoComplete="off"
-	      placeholder="Shortly describe your project..."
+	      placeholder="Briefly describe your project..."
 	      value={description}
 	      onChange={(e) => setDescription(e.target.value)}
 	      required

@@ -65,7 +65,7 @@ export default function ProjectCreateForm() {
 	      id="description"
 	      name="description"
 	      autoComplete="off"
-	      placeholder="Shortly describe your project..."
+	      placeholder="Briefly describe your project..."
 	      required
 	    />
 	  </Field>
