@@ -19,7 +19,7 @@ import { Project } from "@/type";
 
 export default function ProjectEditForm({ initialProject }: { initialProject: Project }) {
   const [title, setTitle] = useState(initialProject.title)
-  const [description, setDescription] = useState(initialProject.title)
+  const [description, setDescription] = useState(initialProject.description)
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
